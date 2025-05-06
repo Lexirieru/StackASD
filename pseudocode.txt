@@ -1,0 +1,70 @@
+// Node Structure
+STRUCTURE Node:
+    data: string/number
+    left: Node pointer
+    right: Node pointer
+END STRUCTURE
+
+// Check if token is an operator
+FUNCTION isOperator(token):
+    RETURN token is in ['+', '-', '*', '/']
+END FUNCTION
+
+// Construct Expression Tree from Postfix
+FUNCTION constructTree(postfix):
+    CREATE empty stack
+    
+    FOR each token IN postfix:
+        IF NOT isOperator(token):
+            // Create new node for operand
+            CREATE new Node with token
+            PUSH node to stack
+        ELSE:
+            // Create new node for operator
+            CREATE new Node with token
+            // Pop right child first, then left child
+            SET node.right = POP from stack
+            SET node.left = POP from stack
+            PUSH node to stack
+        END IF
+    END FOR
+    
+    RETURN POP from stack
+END FUNCTION
+
+// Postorder Traversal
+FUNCTION postorder(node):
+    IF node is not null:
+        CALL postorder(node.left)
+        CALL postorder(node.right)
+        PRINT node.data
+    END IF
+END FUNCTION
+
+// Evaluate Postfix Expression
+FUNCTION evaluatePostfix(postfix):
+    CREATE empty stack
+    
+    FOR each token IN postfix:
+        IF NOT isOperator(token):
+            PUSH float(token) to stack
+        ELSE:
+            operand2 = POP from stack
+            operand1 = POP from stack
+            
+            IF token is '+':
+                result = operand1 + operand2
+            ELSE IF token is '-':
+                result = operand1 - operand2
+            ELSE IF token is '*':
+                result = operand1 * operand2
+            ELSE IF token is '/':
+                result = operand1 / operand2
+            END IF
+            
+            PUSH result to stack
+        END IF
+    END FOR
+    
+    RETURN POP from stack
+END FUNCTION
